@@ -12,22 +12,27 @@ Template.body.onCreated(function () {
 });
 
 Template.body.helpers({
-  tasks() {
+  tasks () {
     const instance = Template.instance();
+    const selector = {};
     if (instance.state.get('hideCompleted')) {
-      // If hide completed is checked, filter tasks
-      return Tasks.find({ checked: { $ne: true } }, { sort: { createdAt: -1 } });
+      selector.checked = { $ne: true };
+    }
+
+    const text = instance.state.get('textSearch');
+    if (text) {
+      selector.text = { $regex: text, $options: 'gi' };
     }
     // Otherwise, return all of the tasks
-    return Tasks.find({}, { sort: { createdAt: -1 } });
+    return Tasks.find(selector, { sort: { createdAt: -1 } });
   },
-  incompleteCount() {
+  incompleteCount () {
     return Tasks.find({ checked: { $ne: true } }).count();
   },
 });
 
 Template.body.events({
-  'submit .new-task': function (event) {
+  'submit #formInsert': function (event) {
     // Prevent default browser form submit
     event.preventDefault();
 
@@ -45,7 +50,20 @@ Template.body.events({
     // Clear form
     target.text.value = '';
   },
-  'change .hide-completed input'(event, instance) {
+  'input [name=search]': function (event, instance) {
+    // Prevent default browser form submit
+    event.preventDefault();
+
+    // Get value from form element
+    const search = event.target.value;
+
+    if (search) {
+      instance.state.set('textSearch', search);
+    } else {
+      instance.state.set('textSearch', false);
+    }
+  },
+  'change .hide-completed input' (event, instance) {
     instance.state.set('hideCompleted', event.target.checked);
   },
 });
