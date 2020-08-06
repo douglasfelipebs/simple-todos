@@ -10,12 +10,24 @@
     {{> loginButtons}}
 
     <form id="formSearch" class="new-task">
-      <input type="search" name="search" placeholder="Type to search for specific tasks" />
+      <label for="search">Filtro:</label>
+      <input type="search" name="search" id="search" placeholder="Pesquisar" />
     </form>
-
+    <hr>
+    <br>
     {{#if currentUser}}
       <form id="formInsert" class="new-task">
-        <input type="text" name="text" placeholder="Type to add new tasks" />
+        <div style="display: flex">
+          <div>
+            <label for="text">Título:</label>
+            <input required type="text" id="text" name="text" placeholder="Adicionar nova tarefa" />
+          </div>
+          <div>
+            <label for="previsao">Previsão:</label>
+            <input required type="date" name="previsao" id="previsao"/>
+          </div>
+          <button type="submit" style="height: 25px; align-self: center">Salvar</button>
+        </div>
       </form>
     {{/if}}
   </header>

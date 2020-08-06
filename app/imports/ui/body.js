@@ -24,7 +24,7 @@ Template.body.helpers({
       selector.text = { $regex: text, $options: 'gi' };
     }
     // Otherwise, return all of the tasks
-    return Tasks.find(selector, { sort: { createdAt: -1 } });
+    return Tasks.find(selector, { sort: { previsao: 1 } });
   },
   incompleteCount () {
     return Tasks.find({ checked: { $ne: true } }).count();
@@ -39,16 +39,18 @@ Template.body.events({
     // Get value from form element
     const target = event.target;
     const text = target.text.value;
+    const previsao = new Date(target.previsao.value);
 
     if (!Meteor.user()) {
       return 'nao_logado';
     }
 
     // Insert a task into the collection
-    Meteor.call('tasks.insert', text);
+    Meteor.call('tasks.insert', { text, previsao });
 
     // Clear form
     target.text.value = '';
+    target.previsao.value = '';
   },
   'input [name=search]': function (event, instance) {
     // Prevent default browser form submit
